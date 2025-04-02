@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account & Plans</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        input[type="text"], input[type="password"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .message-box {
+            background-color: #f0f0f0;
+            padding: 15px;
+            margin-top: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .hidden {
+            display: none;
+        }
+        .toggle-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .toggle-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .toggle-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="registrationContainer">
+    <h2>Register</h2>
+    <form id="registrationForm">
+        <div class="form-group">
+            <input type="number" id="mobileNumber" placeholder="Enter 11-digit Mobile Number" maxlength="11" required>
+        </div>
+        <div class="form-group">
+            <input type="number" id="pin" placeholder="Enter 6-digit PIN" maxlength="6" required>
+        </div>
+        <div class="form-group">
+            <input type="password" id="password" placeholder="Enter Password" required>
+        </div>
+        <div class="form-group">
+            <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+        </div>
+        <div class="form-group">
+            <input type="text" id="initiationCode" placeholder="Enter Initiation Code" required>
+        </div>
+        <!-- CAPTCHA Section -->
+        <div class="form-group">
+            <input type="text" id="captchaInput" placeholder="Enter CAPTCHA" maxlength="4" required>
+            <div id="captcha" style="text-align:center; font-weight:bold; margin-top:10px;"></div>
+        </div>
+        <button type="submit">Register</button>
+    </form>
+    <div class="toggle-link">
+        <p>Already have an account? <a href="javascript:void(0);" id="goToLogin">Login</a></p>
+    </div>
+</div>
+
+<div class="container" id="loginContainer" style="display:none;">
+    <h2>Login</h2>
+    <form id="loginForm">
+        <div class="form-group">
+            <input type="number" id="loginMobileNumber" placeholder="Enter Mobile Number" required>
+        </div>
+        <div class="form-group">
+            <input type="number" id="loginPin" placeholder="Enter 6-digit PIN" required>
+        </div>
+        <div class="form-group">
+            <input type="text" id="loginCaptcha" placeholder="Enter CAPTCHA" maxlength="4" required>
+        </div>
+        <button type="submit">Login</button>
+    </form>
+    <div class="toggle-link">
+        <p>Don't have an account? <a href="javascript:void(0);" id="goToRegister">Register</a></p>
+    </div>
+</div>
+
+<div class="container" id="accountPage" style="display:none;">
+    <h2>Welcome to Your Account</h2>
+    <!-- Daily Sign-In Button -->
+    <button id="signInBtn">Daily Sign-In</button>
+    <div id="signInMessage" class="hidden message-box">
+        <p>You have successfully signed in! Your daily bonus of 10 has been added.</p>
+    </div>
+
+    <!-- Recharge Button -->
+    <button id="rechargeBtn">Recharge Account</button>
+    <div id="rechargeMessage" class="hidden message-box">
+        <p>To recharge your account, send money to the following JazzCash details:</p>
+        <p><strong>JazzCash Number: 03027075472</strong></p>
+        <p><strong>Account Holder: Muhammad Ishaq</strong></p>
+        <p>Once the transaction is completed, you can activate your plan using the balance.</p>
+    </div>
+
+    <!-- Activate Plan -->
+    <button id="activatePlanBtn">Activate Your Plan</button>
+</div>
+
+<script>
+    // CAPTCHA Generation
+    function generateCaptcha() {
+        const captcha = Math.floor(1000 + Math.random() * 9000); // Generates a 4-digit number
+        document.getElementById('captcha').innerText = captcha;
+        return captcha;
+    }
+
+    let generatedCaptcha = generateCaptcha(); // Generate a CAPTCHA on page load
+
+    // Registration form submission
+    document.getElementById('registrationForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const mobileNumber = document.getElementById('mobileNumber').value;
+        const pin = document.getElementById('pin').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const initiationCode = document.getElementById('initiationCode').value;
+        const captchaInput = document.getElementById('captchaInput').value;
+
+        if (password !== confirmPassword) {
+            alert('Passwords do not match!');
+            return;
+        }
+
+        if (captchaInput !== generatedCaptcha.toString()) {
+            alert('Incorrect CAPTCHA!');
+            return;
+        }
+
+        // Store the account information in localStorage (or send it to the backend)
+        localStorage.setItem('mobileNumber', mobileNumber);
+        localStorage.setItem('pin', pin);
+        alert('Registration successful! You can now log in.');
+        
+        // Switch to Login Page
+        document.getElementById('registrationContainer').style.display = 'none';
+        document.getElementById('loginContainer').style.display = 'block';
+    });
+
+    // Login form submission
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const loginMobileNumber = document.getElementById('loginMobileNumber').value;
+        const loginPin = document.getElementById('loginPin').value;
+        const loginCaptcha = document.getElementById('loginCaptcha').value;
+
+        if (loginCaptcha !== generatedCaptcha.toString()) {
+            alert('Incorrect CAPTCHA!');
+            return;
+        }
+
+        const storedMobileNumber = localStorage.getItem('mobileNumber');
+        const storedPin = localStorage.getItem('pin');
+
+        if (loginMobileNumber === storedMobileNumber && loginPin === storedPin) {
+            alert('Login successful!');
+            // Switch to Account Page
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('accountPage').style.display = 'block';
+        } else {
+            alert('Invalid credentials!');
+        }
+    });
+
+    // Daily Sign-In
+    const lastSignInTime = localStorage.getItem('lastSignInTime');
+    const currentTime = new Date().getTime();
+
+    function checkSignInAvailability() {
+        return !lastSignInTime || currentTime - lastSignInTime > 86400000;
+    }
+
+    document.getElementById('signInBtn').addEventListener('click', function() {
+        if (checkSignInAvailability()) {
+            localStorage.setItem('lastSignInTime', currentTime);
+            document.getElementById('signInMessage').classList.remove('hidden');
+        } else {
+            alert('You can only sign in once every 24 hours.');
+        }
+    });
+
+    // Recharge Button
+    document.getElementById('rechargeBtn').addEventListener('click', function() {
+        document.getElementById('rechargeMessage').classList.remove('hidden');
+    });
+
+    // Activate Plan Button
+    document.getElementById('activatePlanBtn').addEventListener('click', function() {
+        alert('Your plan has been successfully activated!');
+    });
+
+    // Toggle between Registration and Login Pages
+    document.getElementById('goToLogin').addEventListener('click', function() {
+        document.getElementById('registrationContainer').style.display = 'none';
+        document.getElementById('loginContainer').style.display = 'block';
+    });
+
+    document.getElementById('goToRegister').addEventListener('click', function() {
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('registrationContainer').style.display = 'block';
+    });
+</script>
+
+</body>
+</html>
